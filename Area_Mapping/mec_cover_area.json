@@ -1,0 +1,18 @@
+{
+    "mec-servers": [
+        {
+            "server-ip": "192.168.1.1",
+            "min-lat": 35.530,
+            "max-lat": 35.532,
+            "min-lon": 139.530,
+            "max-lon": 139.532
+        },
+        {
+            "server-ip": "192.168.2.2",
+            "min-lat": 35.532,
+            "max-lat": 35.534,
+            "min-lon": 139.532,
+            "max-lon": 139.534
+        }
+    ]
+}
