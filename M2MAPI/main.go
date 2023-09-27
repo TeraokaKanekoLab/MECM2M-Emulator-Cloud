@@ -16,16 +16,8 @@ import (
 var port string
 var ip_address string
 
-type MECCoverArea struct {
-	ServerIP string  `json:"server-ip"`
-	MinLat   float64 `json:"min-lat"`
-	MaxLat   float64 `json:"max-lat"`
-	MinLon   float64 `json:"min-lon"`
-	MaxLon   float64 `json:"max-lon"`
-}
-
 type MECCoverAreas struct {
-	MecServers []MECCoverArea `json:"mec-servers"`
+	MecServers []m2mapi.MECCoverArea `json:"mec-servers"`
 }
 
 func init() {
@@ -89,17 +81,24 @@ func resolveAreaMapping(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		results := m2mapi.AreaMapping{}
+		var results []m2mapi.AreaMapping
 		for _, cover_area := range cover_areas.MecServers {
-			if (inputFormat.NE.Lat < cover_area.MinLat && inputFormat.NE.Lon < cover_area.MinLon) || (inputFormat.SW.Lat > cover_area.MaxLat && inputFormat.SW.Lon > cover_area.MaxLon) {
+			if (inputFormat.NE.Lat <= cover_area.MinLat || inputFormat.NE.Lon <= cover_area.MinLon) || (inputFormat.SW.Lat >= cover_area.MaxLat || inputFormat.SW.Lon >= cover_area.MaxLon) {
 				// 対象領域でない
+				//fmt.Printf("(%f < %f && %f < %f) || (%f > %f && %f > %f)", inputFormat.NE.Lat, cover_area.MinLat, inputFormat.NE.Lon, cover_area.MinLon, inputFormat.SW.Lat, cover_area.MaxLat, inputFormat.SW.Lon, cover_area.MaxLon)
 			} else {
 				// 対象領域である
-				results.ServerIPs = append(results.ServerIPs, cover_area.ServerIP)
+				fmt.Println("target area: ", cover_area.ServerIP)
+				result := m2mapi.AreaMapping{}
+				result.MECCoverArea.MinLat = cover_area.MinLat
+				result.MECCoverArea.MaxLat = cover_area.MaxLat
+				result.MECCoverArea.MinLon = cover_area.MinLon
+				result.MECCoverArea.MaxLon = cover_area.MaxLon
+				result.MECCoverArea.ServerIP = cover_area.ServerIP
+				results = append(results, result)
 			}
 		}
 
-		fmt.Println(results)
 		results_str, err := json.Marshal(results)
 		if err != nil {
 			fmt.Println("Error marshaling data: ", err)
