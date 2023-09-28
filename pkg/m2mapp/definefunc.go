@@ -1,6 +1,7 @@
 package m2mapp
 
 import (
+	"MECM2M-Emulator-Cloud/pkg/m2mapi"
 	"fmt"
 	"time"
 )
@@ -34,6 +35,21 @@ type ResolveAreaOutput struct {
 	// output
 	AD  string    `json:"ad"`
 	TTL time.Time `json:"ttl"`
+
+	// etc.
+	Descriptor m2mapi.AreaDescriptor `json:"area-descriptor"` // PMNodeにADに紐づく情報を与えるため
+}
+
+type ResolveNodeInput struct {
+	// input
+	AD         string   `json:"ad"`
+	Capability []string `json:"capability"`
+	NodeType   string   `json:"node-type"`
+}
+
+type ResolveNodeOutput struct {
+	// output
+	VNode []m2mapi.VNodeSet `json:"vnode"`
 }
 
 type SquarePoint struct {
