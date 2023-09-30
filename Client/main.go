@@ -1,12 +1,12 @@
 package main
 
 import (
-	"MECM2M-Emulator-Cloud/pkg/m2mapi"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"mecm2m-Emulator-Cloud/pkg/m2mapi"
 	"net/http"
 	"os"
 )

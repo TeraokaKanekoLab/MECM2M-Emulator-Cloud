@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"MECM2M-Emulator-Cloud/pkg/m2mapi"
+	"mecm2m-Emulator-Cloud/pkg/m2mapi"
 
 	"github.com/joho/godotenv"
 )

@@ -1,4 +1,4 @@
-module MECM2M-Emulator-Cloud
+module mecm2m-Emulator-Cloud
 
 go 1.18
 
