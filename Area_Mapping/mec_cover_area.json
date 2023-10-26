@@ -3,16 +3,37 @@
         {
             "server-ip": "192.168.1.1",
             "min-lat": 35.530,
-            "max-lat": 35.532,
+            "max-lat": 35.590,
             "min-lon": 139.530,
-            "max-lon": 139.532
+            "max-lon": 139.590
         },
         {
             "server-ip": "192.168.2.2",
-            "min-lat": 35.532,
-            "max-lat": 35.534,
+            "min-lat": 35.530,
+            "max-lat": 35.590,
+            "min-lon": 139.590,
+            "max-lon": 139.650
+        },
+        {
+            "server-ip": "192.168.3.3",
+            "min-lat": 35.530,
+            "max-lat": 35.590,
+            "min-lon": 139.650,
+            "max-lon": 139.710
+        },
+        {
+            "server-ip": "192.168.4.4",
+            "min-lat": 35.590,
+            "max-lat": 35.650,
             "min-lon": 139.530,
-            "max-lon": 139.532
+            "max-lon": 139.590
+        },
+        {
+            "server-ip": "192.168.5.5",
+            "min-lat": 35.590,
+            "max-lat": 35.650,
+            "min-lon": 139.590,
+            "max-lon": 139.650
         }
     ]
 }

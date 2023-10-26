@@ -45,7 +45,6 @@ func main() {
 		fmt.Printf("Received signal: %v\n", sig)
 	*/
 	http.HandleFunc("/m2mapi/area/mapping", resolveAreaMapping)
-	http.HandleFunc("/hello", hello)
 
 	log.Printf("Connect to http://%s:%s/ for M2M API", ip_address, port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -82,12 +81,10 @@ func resolveAreaMapping(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var results []m2mapi.AreaMapping
+		// 少しでも範囲が被っていれば，対象領域とする
 		for _, cover_area := range cover_areas.MecServers {
-			if (inputFormat.NE.Lat <= cover_area.MinLat || inputFormat.NE.Lon <= cover_area.MinLon) || (inputFormat.SW.Lat >= cover_area.MaxLat || inputFormat.SW.Lon >= cover_area.MaxLon) {
-				// 対象領域でない
-				//fmt.Printf("(%f < %f && %f < %f) || (%f > %f && %f > %f)", inputFormat.NE.Lat, cover_area.MinLat, inputFormat.NE.Lon, cover_area.MinLon, inputFormat.SW.Lat, cover_area.MaxLat, inputFormat.SW.Lon, cover_area.MaxLon)
-			} else {
-				// 対象領域である
+			if ((inputFormat.NE.Lat <= cover_area.MaxLat && inputFormat.NE.Lat > cover_area.MinLat) || (inputFormat.SW.Lat >= cover_area.MinLat && inputFormat.SW.Lat < cover_area.MaxLat)) && ((inputFormat.NE.Lon <= cover_area.MaxLon && inputFormat.NE.Lon > cover_area.MinLon) || (inputFormat.SW.Lon >= cover_area.MinLon && inputFormat.SW.Lon < cover_area.MaxLon)) {
+				// 対象領域
 				fmt.Println("target area: ", cover_area.ServerIP)
 				result := m2mapi.AreaMapping{}
 				result.MECCoverArea.MinLat = cover_area.MinLat
@@ -108,8 +105,4 @@ func resolveAreaMapping(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Error(w, "resolvePoint: Method not supported: Only POST request", http.StatusMethodNotAllowed)
 	}
-}
-
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World\n")
 }
