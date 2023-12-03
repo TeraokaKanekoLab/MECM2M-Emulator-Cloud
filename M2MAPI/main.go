@@ -1,12 +1,16 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
+	"time"
 
 	"mecm2m-Emulator-Cloud/pkg/m2mapi"
 
@@ -15,6 +19,7 @@ import (
 
 var port string
 var ip_address string
+var rtt_between_machines [][]string
 
 type MECCoverAreas struct {
 	MecServers []m2mapi.MECCoverArea `json:"mec-servers"`
@@ -27,6 +32,15 @@ func init() {
 	}
 	port = os.Getenv("M2M_API_PORT")
 	ip_address = os.Getenv("IP_ADDRESS")
+
+	file, err := os.Open(os.Getenv("HOME") + os.Getenv("PROJECT_NAME") + "/rtt_between_machines.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	rtt_between_machines, _ = reader.ReadAll()
 }
 
 func main() {
@@ -51,6 +65,9 @@ func main() {
 }
 
 func resolveAreaMapping(w http.ResponseWriter, r *http.Request) {
+	// 初めに，リクエストを送信した送信元IPアドレスを確認して，RTTを模擬的に表現
+	executeRTT(r)
+
 	// POST リクエストのみを受信する
 	if r.Method == http.MethodPost {
 		body, err := io.ReadAll(r.Body)
@@ -104,5 +121,23 @@ func resolveAreaMapping(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%v\n", string(results_str))
 	} else {
 		http.Error(w, "resolvePoint: Method not supported: Only POST request", http.StatusMethodNotAllowed)
+	}
+}
+
+func executeRTT(r *http.Request) {
+	var rtt time.Duration
+	src_ip_address := strings.Split(r.RemoteAddr, ":")[0]
+	//fmt.Println(src_ip_address)
+	if src_ip_address == "127.0.0.1" {
+		return
+	} else {
+		for _, rttComb := range rtt_between_machines {
+			if (rttComb[0] == src_ip_address && rttComb[1] == ip_address) || (rttComb[1] == src_ip_address && rttComb[0] == ip_address) {
+				rtt_float, _ := strconv.ParseFloat(rttComb[2], 64)
+				rtt_str := strconv.FormatFloat(rtt_float, 'f', 2, 64) + "ms"
+				rtt, _ = time.ParseDuration(rtt_str)
+			}
+		}
+		time.Sleep(rtt)
 	}
 }
